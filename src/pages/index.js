@@ -8,27 +8,62 @@ import {
 } from '@ant-design/icons';
 import {Layout, Menu, Button, theme} from 'antd';
 import {useRouter} from 'next/router';
+import {fetchCollection} from '@/firebase/functions';
+import {useQuery, useQueryClient} from 'react-query';
+import {firestore} from '@/firebase-config';
+import {COLLECTION_NAMES} from '@/firebase/constants';
 const {Header, Sider, Content} = Layout;
 const App = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: {colorBgContainer},
   } = theme.useToken();
+
+  const handleAddStudentClick = () => {
+    router.push('/addstudent');
+    queryClient.invalidateQueries('id');
+  };
+
+  const fetchStudent = async () => {
+    try {
+      debugger;
+      let response = await fetchCollection(
+        firestore,
+        COLLECTION_NAMES.students
+      );
+      return response;
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    }
+  };
+
+  const {data, isLoading, isError} = useQuery('id', fetchStudent);
+
+  if (isLoading) {
+    return (
+      <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
+        Loading...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Error fetching data</div>;
+  }
+
   return (
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         {collapsed ? (
-          <div className='p-5 font-bold text-xl'>E</div>
+          <div className='p-5 font-bold text-xl justify-center flex'>E</div>
         ) : (
           <div className='p-5 font-bold text-xl'>EDUCATION</div>
         )}
         <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
-          <Menu.Item
-            key='1'
-            icon={<UserOutlined />}
-            // onClick={() => router.push('/students')}
-          >
+          <Menu.Item key='1' icon={<UserOutlined />}>
             Students Record
           </Menu.Item>
           <Menu.Item
@@ -76,7 +111,7 @@ const App = () => {
           <div className='flex justify-between'>
             <div className='text-black text-lg font-bold'> STUDENTS </div>
             <button
-              onClick={() => {}}
+              onClick={handleAddStudentClick}
               className='bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2 focus:ring-offset-white'
             >
               Add Student
@@ -107,7 +142,7 @@ const App = () => {
                 <tbody>
                   {data.map((item, index) => (
                     <tr
-                      key={index}
+                      key={item.id}
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                     >
                       <th
