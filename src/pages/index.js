@@ -1,118 +1,141 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+import React, {useState} from 'react';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  PhoneOutlined,
+  UserOutlined,
+  MoneyCollectOutlined,
+} from '@ant-design/icons';
+import {Layout, Menu, Button, theme} from 'antd';
+import {useRouter} from 'next/router';
+const {Header, Sider, Content} = Layout;
+const App = () => {
+  const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: {colorBgContainer},
+  } = theme.useToken();
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Layout className='h-screen'>
+      <Sider trigger={null} collapsible collapsed={collapsed}>
+        {collapsed ? (
+          <div className='p-5 font-bold text-xl'>E</div>
+        ) : (
+          <div className='p-5 font-bold text-xl'>EDUCATION</div>
+        )}
+        <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
+          <Menu.Item
+            key='1'
+            icon={<UserOutlined />}
+            // onClick={() => router.push('/students')}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+            Students Record
+          </Menu.Item>
+          <Menu.Item
+            key='2'
+            icon={<MoneyCollectOutlined />}
+            onClick={() => router.push('/fee-structure')}
+          >
+            Fee Structure
+          </Menu.Item>
+          <Menu.Item
+            key='3'
+            icon={<PhoneOutlined />}
+            onClick={() => router.push('/contact')}
+          >
+            Contact
+          </Menu.Item>
+        </Menu>
+      </Sider>
+      <Layout>
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+          }}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+          <Button
+            type='text'
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: '16px',
+              width: 64,
+              height: 64,
+            }}
+          />
+        </Header>
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+          }}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+          <div className='flex justify-between'>
+            <div className='text-black text-lg font-bold'> STUDENTS </div>
+            <button
+              onClick={() => {}}
+              className='bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2 focus:ring-offset-white'
+            >
+              Add Student
+            </button>
+          </div>
+          <div className='text-black mt-6'>
+            <div class='relative overflow-x-auto shadow-md sm:rounded-lg'>
+              <table className='w-full text-sm text-left'>
+                <thead className='text-xs uppercase bg-gray-50'>
+                  <tr>
+                    <th scope='col' className='px-6 py-3'>
+                      Full name
+                    </th>
+                    <th scope='col' className='px-6 py-3'>
+                      Tution fee
+                    </th>
+                    <th scope='col' className='px-6 py-3'>
+                      Transport fee
+                    </th>
+                    <th scope='col' className='px-6 py-3'>
+                      Contact
+                    </th>
+                    <th scope='col' className='px-6 py-3'>
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => (
+                    <tr
+                      key={index}
+                      className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                    >
+                      <th
+                        scope='row'
+                        className='px-6 py-4 font-medium whitespace-nowrap'
+                      >
+                        {item.fullName}
+                      </th>
+                      <td className='px-6 py-4'>{item.tuitionFee}</td>
+                      <td className='px-6 py-4'>{item.transportFee}</td>
+                      <td className='px-6 py-4'>{item.contact}</td>
+                      <td className='px-6 py-4'>
+                        <a
+                          href='#'
+                          className='font-medium text-blue-600 hover:underline'
+                        >
+                          Edit
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+};
+export default App;
