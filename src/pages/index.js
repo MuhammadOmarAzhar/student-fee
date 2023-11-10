@@ -57,9 +57,11 @@ const App = () => {
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         {collapsed ? (
-          <div className='p-5 font-bold text-xl justify-center flex'>E</div>
+          <div className='p-5 font-bold text-xl justify-center text-white flex'>
+            E
+          </div>
         ) : (
-          <div className='p-5 font-bold text-xl'>EDUCATION</div>
+          <div className='p-5 font-bold text-xl text-white'>EDUCATION</div>
         )}
         <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
           <Menu.Item key='1' icon={<UserOutlined />}>

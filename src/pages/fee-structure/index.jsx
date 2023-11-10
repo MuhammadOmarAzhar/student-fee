@@ -19,9 +19,9 @@ const FeeStructure = () => {
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         {collapsed ? (
-          <div className='p-5 font-bold text-xl'>E</div>
+          <div className='p-5 font-bold text-xl text-white'>E</div>
         ) : (
-          <div className='p-5 font-bold text-xl'>EDUCATION</div>
+          <div className='p-5 font-bold text-xl text-white'>EDUCATION</div>
         )}
         <Menu theme='dark' mode='inline' defaultSelectedKeys={['2']}>
           <Menu.Item
