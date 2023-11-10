@@ -29,7 +29,6 @@ const App = () => {
 
   const fetchStudent = async () => {
     try {
-      debugger;
       let response = await fetchCollection(
         firestore,
         COLLECTION_NAMES.students
@@ -149,11 +148,11 @@ const App = () => {
                         scope='row'
                         className='px-6 py-4 font-medium whitespace-nowrap'
                       >
-                        {item.fullName}
+                        {item.firstName} {item.lastName}
                       </th>
                       <td className='px-6 py-4'>{item.tuitionFee}</td>
                       <td className='px-6 py-4'>{item.transportFee}</td>
-                      <td className='px-6 py-4'>{item.contact}</td>
+                      <td className='px-6 py-4'>{item.phone}</td>
                       <td className='px-6 py-4'>
                         <a
                           href='#'
