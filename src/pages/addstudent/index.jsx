@@ -98,12 +98,12 @@ const Addstudent = () => {
                   First Name
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white'
+                  className='appearance-none block w-full bg-white text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white'
                   id='grid-first-name'
                   type='text'
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder='Jane'
+                  // placeholder='Jane'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -114,12 +114,12 @@ const Addstudent = () => {
                   Last Name
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-last-name'
                   type='text'
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder='Doe'
+                  // placeholder='Doe'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -130,12 +130,12 @@ const Addstudent = () => {
                   Father/Guardian Name
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-father-name'
                   type='text'
                   value={fatherName}
                   onChange={(e) => setFatherName(e.target.value)}
-                  placeholder='Doe'
+                  // placeholder='Doe'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -146,12 +146,12 @@ const Addstudent = () => {
                   Email
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-email'
                   type='text'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder='example@gmail.com'
+                  // placeholder='example@gmail.com'
                 />
               </div>
             </div>
@@ -164,12 +164,12 @@ const Addstudent = () => {
                   Contact
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-contact'
                   type='text'
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder='03xxxxxxxxx'
+                  // placeholder='03xxxxxxxxx'
                 />
                 <p className='text-gray-600 text-xs italic'>
                   Contact number should be 11 digits
@@ -183,12 +183,12 @@ const Addstudent = () => {
                   Class
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-class'
                   type='text'
                   value={studentClass}
                   onChange={(e) => setStudentClass(e.target.value)}
-                  placeholder='4'
+                  // placeholder='4'
                 />
               </div>
             </div>
@@ -202,12 +202,12 @@ const Addstudent = () => {
                   City
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-city'
                   type='text'
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder='Islamabad'
+                  // placeholder='Islamabad'
                 />
               </div>
               <div className='w-full md:w-1/3 px-3 mb-6 md:mb-0'>
@@ -218,12 +218,12 @@ const Addstudent = () => {
                   Blood group
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-blood-group'
                   type='text'
                   value={bloodgroup}
                   onChange={(e) => setBloodGroup(e.target.value)}
-                  placeholder='B+'
+                  // placeholder='B+'
                 />
               </div>
               <div className='w-full md:w-1/3 px-3 mb-6 md:mb-0'>
@@ -235,7 +235,7 @@ const Addstudent = () => {
                 </label>
                 <div className='relative'>
                   <select
-                    className='block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                    className='block appearance-none w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                     id='grid-gender'
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
@@ -264,15 +264,15 @@ const Addstudent = () => {
                   Religion
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-religion'
                   type='text'
                   value={religion}
                   onChange={(e) => setReligion(e.target.value)}
-                  placeholder='Islam'
+                  // placeholder='Islam'
                 />
               </div>
-              <Divider orientation='left'>Fee Structure</Divider>
+              <Divider>Fee Structure</Divider>
             </div>
             <div className='flex flex-wrap -mx-3 mb-6'>
               <div className='w-full md:w-1/2 px-3 mb-6 md:mb-0'>
@@ -283,12 +283,12 @@ const Addstudent = () => {
                   Admission fee
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white'
+                  className='appearance-none block w-full bg-white text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white'
                   id='grid-admission-fee'
                   type='text'
                   value={admissionFee}
                   onChange={(e) => setAdmissionFee(e.target.value)}
-                  placeholder='3000'
+                  // placeholder='3000'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -299,12 +299,12 @@ const Addstudent = () => {
                   tuition fee
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-tuition-fee'
                   type='text'
                   value={tuitionFee}
                   onChange={(e) => setTuitionFee(e.target.value)}
-                  placeholder='5000'
+                  // placeholder='5000'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -315,12 +315,12 @@ const Addstudent = () => {
                   Transport fee
                 </label>
                 <input
-                  className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-transport-fee'
                   type='text'
                   value={transportFee}
                   onChange={(e) => setTransportFee(e.target.value)}
-                  placeholder='1500'
+                  // placeholder='1500'
                 />
               </div>
               <Divider />

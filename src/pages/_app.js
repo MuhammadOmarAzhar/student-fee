@@ -9,7 +9,7 @@ export default function App({Component, pageProps}) {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </QueryClientProvider>
   );
 }
