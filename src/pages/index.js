@@ -27,6 +27,30 @@ const App = () => {
     queryClient.invalidateQueries('id');
   };
 
+  const handleStudentDetail = (item) => {
+    debugger;
+    router.push({
+      pathname: '/student-detail',
+      query: {
+        id: item.id,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        fatherName: item.fatherName,
+        tuitionFee: item.tuitionFee,
+        transportFee: item.transportFee,
+        admissionFee: item.admissionFee,
+        phone: item.phone,
+        address: item.address,
+        bloodgroup: item.bloodgroup,
+        religion: item.religion,
+        studentClass: item.studentClass,
+        gender: item.gender,
+        email: item.email,
+      },
+    });
+    queryClient.invalidateQueries('id');
+  };
+
   const fetchStudent = async () => {
     try {
       let response = await fetchCollection(
@@ -148,7 +172,8 @@ const App = () => {
                     >
                       <th
                         scope='row'
-                        className='px-6 py-4 font-medium whitespace-nowrap'
+                        onClick={() => handleStudentDetail(item)}
+                        className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer'
                       >
                         {item.firstName} {item.lastName}
                       </th>
