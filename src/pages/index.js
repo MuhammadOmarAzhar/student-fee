@@ -48,7 +48,7 @@ const App = () => {
         email: item.email,
       },
     });
-    queryClient.invalidateQueries('id');
+    queryClient.invalidateQueries('student');
   };
 
   const fetchStudent = async () => {
@@ -63,7 +63,7 @@ const App = () => {
     }
   };
 
-  const {data, isLoading, isError} = useQuery('id', fetchStudent);
+  const {data, isLoading, isError} = useQuery('student', fetchStudent);
 
   if (isLoading) {
     return (
