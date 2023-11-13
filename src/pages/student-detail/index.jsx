@@ -1,4 +1,5 @@
 import {UserOutlined} from '@ant-design/icons';
+import DescriptionIcon from '@mui/icons-material/Description';
 import AddIcon from '@mui/icons-material/Add';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -61,7 +62,17 @@ const studentDetail = () => {
       <div className='flex justify-center'>
         <div className='bg-white p-6 rounded-lg h-fit w-fit'>
           <form className='w-full max-w-lg'>
-            <div className='flex justify-center  p-6'>
+            <div className='flex justify-end'>
+              <button
+                className='bg-teal-400 hover:bg-teal-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
+                type='button'
+              >
+                <Tooltip title='Fee Record'>
+                  <DescriptionIcon />
+                </Tooltip>
+              </button>
+            </div>
+            <div className='flex justify-center p-6'>
               <div className='text-black text-5xl'>
                 <UserOutlined style={{color: '#9CA3AF', marginRight: 5}} />
               </div>
