@@ -53,7 +53,7 @@ const studentDetail = () => {
     router.push('/');
   };
   return (
-    <div className='bg-gray-200 h-screen grid justify-center p-6'>
+    <div className='bg-gray-200 h-full grid justify-center p-6'>
       <div className='flex justify-center'>
         <div className='bg-white p-6 rounded-lg h-fit w-fit'>
           <form className='w-full max-w-lg'>
