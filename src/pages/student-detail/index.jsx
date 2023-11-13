@@ -1,8 +1,12 @@
 import {UserOutlined} from '@ant-design/icons';
+import AddIcon from '@mui/icons-material/Add';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {Divider} from 'antd';
 import {useRouter} from 'next/router';
 import React, {useState} from 'react';
 import Modal from 'react-modal';
+import {Tooltip} from '@mui/material';
 
 const studentDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -174,22 +178,25 @@ const studentDetail = () => {
                   type='button'
                   onClick={handleBack}
                 >
-                  Back
+                  <KeyboardBackspaceIcon />
                 </button>
-                <div>
+                <div className='flex'>
                   <button
-                    className='bg-blue-500 hover:bg-blue-700 text-white m-2  py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-blue'
+                    className='flex items-center bg-blue-500 hover:bg-blue-700 text-white m-2  py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-blue'
                     type='button'
                     onClick={handleOpenModal}
                   >
-                    New Fee Structure
+                    <AddIcon style={{marginRight: 5, fontSize: 22}} />
+                    <p className='text-sm'>New Fee Structure</p>
                   </button>
                   <button
-                    className='bg-green-500 hover:bg-green-700 text-white  m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
+                    className='bg-green-500 hover:bg-green-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
                     type='button'
                     onClick={handleOpenModal}
                   >
-                    Fee Collection
+                    <Tooltip title='Fee Collection'>
+                      <ReceiptIcon />
+                    </Tooltip>
                   </button>
                 </div>
                 <Modal
