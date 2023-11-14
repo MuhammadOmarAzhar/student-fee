@@ -15,7 +15,8 @@ const studentDetail = () => {
     tuitionFee: '',
     transportFee: '',
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [textValue, setTextValue] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const router = useRouter();
   const {
     id,
@@ -66,6 +67,10 @@ const studentDetail = () => {
 
   const handleBack = () => {
     router.push('/');
+  };
+
+  const handleInputChange = (e) => {
+    setTextValue(e.target.value);
   };
   return (
     <div className='bg-gray-200 grid justify-center p-6'>
@@ -232,7 +237,7 @@ const studentDetail = () => {
                       placeItems: 'center',
                     },
                     content: {
-                      width: '40%',
+                      // width: '60%',
                       height: 'auto',
                       margin: 'auto',
                       top: '50%',
@@ -240,51 +245,47 @@ const studentDetail = () => {
                     },
                   }}
                 >
-                  <div>
-                    <div className='flex justify-end'>
+                  <>
+                    <div className='flex justify-between items-center'>
+                      <h2 className='text-black ml-6  font-semibold uppercase '>
+                        New Fee Structure
+                      </h2>
                       <button
-                        className='text-black p-3'
+                        className='text-black p-4'
                         onClick={handleCloseModal}
                       >
                         <CloseIcon />
                       </button>
                     </div>
-                    <h2 className='text-black text-center font-semibold uppercase'>
-                      Student Fee Structure
-                    </h2>
-                    <Divider style={{color: 'lightgray'}}>
-                      Current Fee Structure
-                    </Divider>
-                    <div className='p-6 justify-between flex '>
-                      <div>
-                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
-                          Admission fee
-                        </label>
-                        <p className='text-gray-400 text-sm mt-2'>
+
+                    <div className='px-6 py-3 justify-between flex '>
+                      <div className='flex items-center '>
+                        <p className='uppercase text-green-800 text-xs font-semibold'>
+                          Admission fee:
+                        </p>
+                        <p className='text-green-700 text-xs ml-1'>
                           {studentData.admissionFee}
                         </p>
                       </div>
-                      <div>
-                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
-                          Tuition fee
-                        </label>
-                        <p className='text-gray-400 text-sm mt-2'>
+                      <div className='flex items-center '>
+                        <p className='uppercase text-green-800 text-xs font-semibold'>
+                          Tuition fee:
+                        </p>
+                        <p className='text-green-700 text-xs ml-1'>
                           {studentData.tuitionFee}
                         </p>
                       </div>
-                      <div>
-                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
-                          Transport fee
-                        </label>
-                        <p className='text-gray-400 text-sm mt-2'>
+                      <div className='flex items-center '>
+                        <p className='uppercase tracking-wide text-green-800 text-xs font-semibold'>
+                          Transport fee:
+                        </p>
+                        <p className='text-green-700 text-xs ml-1'>
                           {studentData.transportFee}
                         </p>
                       </div>
                     </div>
-                    <Divider style={{color: 'lightgray'}}>
-                      New Fee Structure
-                    </Divider>
-                    <div className='p-6 flex flex-wrap gap-4 justify-center'>
+
+                    <div className='p-6 grid md:flex flex-wrap gap-4'>
                       <div>
                         <label
                           className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
@@ -318,19 +319,35 @@ const studentDetail = () => {
                         />
                       </div>
                     </div>
-                    <div>
-                      <Divider />
-                      <div className='flex justify-end items-end m-6'>
-                        <button
-                          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue'
-                          type='submit'
-                          // onClick={handleSubmit}
-                        >
-                          Submit
-                        </button>
-                      </div>
+
+                    <div className='px-6'>
+                      <label
+                        className='flex uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
+                        htmlFor='grid-transport-fee'
+                      >
+                        Note{' '}
+                        <p className='text-gray-400 text-[10px] ml-1'>
+                          {'(optional)'}
+                        </p>
+                      </label>
+                      <textarea
+                        className='border rounded w-full p-2'
+                        rows='3'
+                        value={textValue}
+                        onChange={handleInputChange}
+                      />
                     </div>
-                  </div>
+
+                    <div className='flex justify-end items-end mx-6 mt-3 mb-6'>
+                      <button
+                        className='bg-blue-500 hover:bg-blue-700 text-white  py-1.5 px-4 rounded focus:outline-none focus:shadow-outline-blue'
+                        type='submit'
+                        // onClick={handleSubmit}
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </>
                 </Modal>
               </div>
             </div>
