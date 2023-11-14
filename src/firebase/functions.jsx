@@ -25,6 +25,24 @@ export const insertIntoCollection = async (db, collectionName, values) => {
   }
 };
 
+export const insertIntoCollectionReturnId = async (
+  db,
+  collectionName,
+  values
+) => {
+  try {
+    const response = await addDoc(collection(db, collectionName), {
+      ...values,
+    });
+    await updateDoc(response, {
+      id: response.id,
+    });
+    return response.id;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 export const updateCollection = async (db, collectionName, id, values) => {
   try {
     const docRef = doc(db, collectionName, id);
