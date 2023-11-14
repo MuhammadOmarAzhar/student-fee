@@ -3,6 +3,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import AddIcon from '@mui/icons-material/Add';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import CloseIcon from '@mui/icons-material/Close';
 import {Divider} from 'antd';
 import {useRouter} from 'next/router';
 import React, {useState} from 'react';
@@ -10,6 +11,10 @@ import Modal from 'react-modal';
 import {Tooltip} from '@mui/material';
 
 const studentDetail = () => {
+  const [newFee, setNewFee] = useState({
+    tuitionFee: '',
+    transportFee: '',
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const {
@@ -54,17 +59,22 @@ const studentDetail = () => {
     setIsModalOpen(false);
   };
 
+  const handleOnChange = (e) => {
+    const {name, value} = e.target;
+    setNewFee({...newFee, [name]: value});
+  };
+
   const handleBack = () => {
     router.push('/');
   };
   return (
-    <div className='bg-gray-200 h-full grid justify-center p-6'>
+    <div className='bg-gray-200 grid justify-center p-6'>
       <div className='flex justify-center'>
         <div className='bg-white p-6 rounded-lg h-fit w-fit'>
           <form className='w-full max-w-lg'>
             <div className='flex justify-end'>
               <button
-                className='bg-teal-400 hover:bg-teal-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
+                className='bg-teal-500 hover:bg-teal-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
                 type='button'
               >
                 <Tooltip title='Fee Record'>
@@ -201,9 +211,9 @@ const studentDetail = () => {
                     <p className='text-sm'>New Fee Structure</p>
                   </button>
                   <button
-                    className='bg-green-500 hover:bg-green-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
+                    className='bg-green-600 hover:bg-green-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
                     type='button'
-                    onClick={handleOpenModal}
+                    // onClick={handleOpenModal}
                   >
                     <Tooltip title='Fee Collection'>
                       <ReceiptIcon />
@@ -213,13 +223,114 @@ const studentDetail = () => {
                 <Modal
                   isOpen={isModalOpen}
                   onRequestClose={handleCloseModal}
-                  contentLabel='Example Modal'
+                  contentLabel='New Fee Structure Modal'
+                  className='grid grid-cols-1 justify-center items-center bg-white'
+                  style={{
+                    overlay: {
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      display: 'grid',
+                      placeItems: 'center',
+                    },
+                    content: {
+                      width: '40%',
+                      height: 'auto',
+                      margin: 'auto',
+                      top: '50%',
+                      borderRadius: '8px',
+                    },
+                  }}
                 >
-                  <h2 className='text-black'>Modal Content</h2>
-                  <p className='text-black'>Any other content can go here...</p>
-                  <button className='text-black' onClick={handleCloseModal}>
-                    Close Modal
-                  </button>
+                  <div>
+                    <div className='flex justify-end'>
+                      <button
+                        className='text-black p-3'
+                        onClick={handleCloseModal}
+                      >
+                        <CloseIcon />
+                      </button>
+                    </div>
+                    <h2 className='text-black text-center font-semibold uppercase'>
+                      Student Fee Structure
+                    </h2>
+                    <Divider style={{color: 'lightgray'}}>
+                      Current Fee Structure
+                    </Divider>
+                    <div className='p-6 justify-between flex '>
+                      <div>
+                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
+                          Admission fee
+                        </label>
+                        <p className='text-gray-400 text-sm mt-2'>
+                          {studentData.admissionFee}
+                        </p>
+                      </div>
+                      <div>
+                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
+                          Tuition fee
+                        </label>
+                        <p className='text-gray-400 text-sm mt-2'>
+                          {studentData.tuitionFee}
+                        </p>
+                      </div>
+                      <div>
+                        <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold'>
+                          Transport fee
+                        </label>
+                        <p className='text-gray-400 text-sm mt-2'>
+                          {studentData.transportFee}
+                        </p>
+                      </div>
+                    </div>
+                    <Divider style={{color: 'lightgray'}}>
+                      New Fee Structure
+                    </Divider>
+                    <div className='p-6 flex flex-wrap gap-4 justify-center'>
+                      <div>
+                        <label
+                          className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
+                          htmlFor='grid-tuition-fee'
+                        >
+                          new tuition fee
+                        </label>
+                        <input
+                          className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                          id='grid-tuition-fee'
+                          type='tuitionFee'
+                          name='tuitionFee'
+                          value={newFee.tuitionFee}
+                          onChange={handleOnChange}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
+                          htmlFor='grid-transport-fee'
+                        >
+                          new Transport fee
+                        </label>
+                        <input
+                          className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                          id='grid-transport-fee'
+                          type='transportFee'
+                          name='transportFee'
+                          value={newFee.transportFee}
+                          onChange={handleOnChange}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Divider />
+                      <div className='flex justify-end items-end m-6'>
+                        <button
+                          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue'
+                          type='submit'
+                          // onClick={handleSubmit}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </Modal>
               </div>
             </div>
