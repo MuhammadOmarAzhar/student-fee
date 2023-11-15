@@ -10,6 +10,7 @@ import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
 import {toast} from 'react-toastify';
 import {useRouter} from 'next/router';
+import moment from 'moment/moment';
 
 const Addstudent = () => {
   const [firstName, setFirstName] = useState('');
@@ -40,6 +41,7 @@ const Addstudent = () => {
         admissionFee,
         tuitionFee,
         transportFee,
+        createdAt: moment().unix(),
       });
     },
     {
@@ -69,6 +71,7 @@ const Addstudent = () => {
         phone,
         address,
         religion,
+        createdAt: moment().unix(),
       };
       await createStudentMutation.mutateAsync(newStudent);
       router.push('/');

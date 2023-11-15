@@ -10,10 +10,11 @@ import React, {useState} from 'react';
 import Modal from 'react-modal';
 import {Tooltip} from '@mui/material';
 import {toast} from 'react-toastify';
-import {updateCollection} from '@/firebase/functions';
+import {fetchCollectionWhere, updateCollection} from '@/firebase/functions';
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
-import {useMutation, useQueryClient} from 'react-query';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
+import {first} from 'lodash';
 
 const studentDetail = () => {
   const queryClient = useQueryClient();
@@ -26,13 +27,10 @@ const studentDetail = () => {
   const router = useRouter();
   const {
     id,
-    feeStructureid,
+
     firstName,
     lastName,
     fatherName,
-    tuitionFee,
-    transportFee,
-    admissionFee,
     phone,
     email,
     address,
@@ -44,13 +42,9 @@ const studentDetail = () => {
 
   const studentData = {
     id,
-    feeStructureid,
     firstName,
     lastName,
     fatherName,
-    tuitionFee,
-    transportFee,
-    admissionFee,
     phone,
     address,
     bloodgroup,
@@ -90,28 +84,67 @@ const studentDetail = () => {
   };
 
   const ModalSubmitButton = () => {
-    editFee();
+    mutation.mutate();
   };
 
-  const editFee = async () => {
-    try {
-      // setLoader(true);
-      handleCloseModal();
+  const mutation = useMutation(
+    async () => {
+      debugger;
       await updateCollection(
         firestore,
         COLLECTION_NAMES.feestructure,
-        feeStructureid,
+        data.id,
         newFee
       );
-      await queryClient.refetchQueries('student');
+
+      await queryClient.invalidateQueries('feestructure');
+
+      handleCloseModal();
+
       toast.success('User info edited successfully!', {
         position: 'top-center',
         autoClose: 3000,
       });
+    },
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log(error.message);
+      },
+    }
+  );
+
+  const feeStructure = async () => {
+    try {
+      let response = await fetchCollectionWhere(
+        firestore,
+        COLLECTION_NAMES.feestructure,
+        'student_Id',
+        studentData.id
+      );
+      return response;
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  const {data, isLoading, isError} = useQuery('feestructure', feeStructure, {
+    select: (data) => {
+      return data && data.length > 0 ? first(data) : null;
+    },
+  });
+
+  if (isLoading || mutation.isLoading) {
+    return (
+      <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
+        Loading...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Error fetching data</div>;
+  }
 
   return (
     <div className='bg-gray-200 grid justify-center p-6'>
@@ -219,25 +252,19 @@ const studentDetail = () => {
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Admission fee
                 </label>
-                <p className='text-gray-400 text-sm'>
-                  {studentData.admissionFee}
-                </p>
+                <p className='text-gray-400 text-sm'>{data.admissionFee}</p>
               </div>
               <div className='w-full md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Tuition fee
                 </label>
-                <p className='text-gray-400 text-sm'>
-                  {studentData.tuitionFee}
-                </p>
+                <p className='text-gray-400 text-sm'>{data.tuitionFee}</p>
               </div>
               <div className='w-full mt-6 md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Transport fee
                 </label>
-                <p className='text-gray-400 text-sm'>
-                  {studentData.transportFee}
-                </p>
+                <p className='text-gray-400 text-sm'>{data.transportFee}</p>
               </div>
               <Divider />
               <div className='w-full flex justify-between items-center mt-6 mx-2'>
@@ -306,7 +333,7 @@ const studentDetail = () => {
                           Admission fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {studentData.admissionFee}
+                          {data.admissionFee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -314,7 +341,7 @@ const studentDetail = () => {
                           Tuition fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {studentData.tuitionFee}
+                          {data.tuitionFee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -322,7 +349,7 @@ const studentDetail = () => {
                           Transport fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {studentData.transportFee}
+                          {data.transportFee}
                         </p>
                       </div>
                     </div>

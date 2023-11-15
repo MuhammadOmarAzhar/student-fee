@@ -12,6 +12,7 @@ import {fetchCollection, fetchCollectionWhere} from '@/firebase/functions';
 import {useQuery, useQueryClient} from 'react-query';
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
+import {first} from 'lodash';
 const {Header, Sider, Content} = Layout;
 const App = () => {
   const router = useRouter();
@@ -28,29 +29,22 @@ const App = () => {
   };
 
   const handleStudentDetail = (item) => {
-    const feeStructure =
-      Array.isArray(item.feeStructure) && item.feeStructure.length > 0
-        ? item.feeStructure[0]
-        : {};
+    let data = {
+      id: item.id,
+      firstName: item.firstName,
+      lastName: item.lastName,
+      fatherName: item.fatherName,
+      phone: item.phone,
+      address: item.address,
+      bloodgroup: item.bloodgroup,
+      religion: item.religion,
+      studentClass: item.studentClass,
+      gender: item.gender,
+      email: item.email,
+    };
     router.push({
       pathname: '/student-detail',
-      query: {
-        id: item.student.id,
-        feeStructureid: feeStructure.id || '',
-        firstName: item.student.firstName,
-        lastName: item.student.lastName,
-        fatherName: item.student.fatherName,
-        tuitionFee: feeStructure.tuitionFee || '',
-        transportFee: feeStructure.transportFee || '',
-        admissionFee: feeStructure.admissionFee || '',
-        phone: item.student.phone,
-        address: item.student.address,
-        bloodgroup: item.student.bloodgroup,
-        religion: item.student.religion,
-        studentClass: item.student.studentClass,
-        gender: item.student.gender,
-        email: item.student.email,
-      },
+      query: data,
     });
     queryClient.invalidateQueries('student');
   };
@@ -61,24 +55,21 @@ const App = () => {
         firestore,
         COLLECTION_NAMES.students
       );
+      let studentsWithFeeStructure = [];
+      for (const student of students) {
+        const feeStructure = await fetchCollectionWhere(
+          firestore,
+          COLLECTION_NAMES.feestructure,
+          'student_Id',
+          student.id
+        );
 
-      const studentsWithFeeStructure = {};
+        studentsWithFeeStructure = [
+          ...studentsWithFeeStructure,
+          {...student, feeStructure: first(feeStructure)},
+        ];
+      }
 
-      await Promise.all(
-        students.map(async (student) => {
-          const feeStructure = await fetchCollectionWhere(
-            firestore,
-            COLLECTION_NAMES.feestructure,
-            'student_Id',
-            student.id
-          );
-
-          studentsWithFeeStructure[student.id] = {
-            student,
-            feeStructure,
-          };
-        })
-      );
       return studentsWithFeeStructure;
     } catch (error) {
       console.error('Error fetching students with fee structure:', error);
@@ -169,7 +160,7 @@ const App = () => {
             </button>
           </div>
           <div className='text-black mt-6'>
-            <div class='relative overflow-x-auto shadow-md sm:rounded-lg'>
+            <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
               <table className='w-full text-sm text-left'>
                 <thead className='text-xs uppercase bg-gray-50'>
                   <tr>
@@ -191,9 +182,9 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.values(data).map((item, index) => (
+                  {data?.map((item, index) => (
                     <tr
-                      key={item.student.id}
+                      key={item.id}
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                     >
                       <th
@@ -201,15 +192,15 @@ const App = () => {
                         onClick={() => handleStudentDetail(item)}
                         className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer text-blue-600 hover:underline'
                       >
-                        {item.student.firstName} {item.student.lastName}
+                        {item.firstName} {item.lastName}
                       </th>
                       <td className='px-6 py-4'>
-                        {item.feeStructure[0]?.tuitionFee}
+                        {item.feeStructure?.tuitionFee}
                       </td>
                       <td className='px-6 py-4'>
-                        {item.feeStructure[0]?.transportFee}
+                        {item.feeStructure?.transportFee}
                       </td>
-                      <td className='px-6 py-4'>{item.student.phone}</td>
+                      <td className='px-6 py-4'>{item.phone}</td>
                       <td className='px-6 py-4'>
                         <a
                           href='#'
