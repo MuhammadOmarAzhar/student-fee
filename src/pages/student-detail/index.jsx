@@ -9,8 +9,14 @@ import {useRouter} from 'next/router';
 import React, {useState} from 'react';
 import Modal from 'react-modal';
 import {Tooltip} from '@mui/material';
+import {toast} from 'react-toastify';
+import {updateCollection} from '@/firebase/functions';
+import {firestore} from '@/firebase-config';
+import {COLLECTION_NAMES} from '@/firebase/constants';
+import {useMutation, useQueryClient} from 'react-query';
 
 const studentDetail = () => {
+  const queryClient = useQueryClient();
   const [newFee, setNewFee] = useState({
     tuitionFee: '',
     transportFee: '',
@@ -20,6 +26,7 @@ const studentDetail = () => {
   const router = useRouter();
   const {
     id,
+    feeStructureid,
     firstName,
     lastName,
     fatherName,
@@ -37,6 +44,7 @@ const studentDetail = () => {
 
   const studentData = {
     id,
+    feeStructureid,
     firstName,
     lastName,
     fatherName,
@@ -69,9 +77,42 @@ const studentDetail = () => {
     router.push('/');
   };
 
+  const handleFeeRecordButton = () => {
+    router.push('/fee-record');
+  };
+
+  const handleFeeCollectionButton = () => {
+    router.push('/fee-collection');
+  };
+
   const handleInputChange = (e) => {
     setTextValue(e.target.value);
   };
+
+  const ModalSubmitButton = () => {
+    editFee();
+  };
+
+  const editFee = async () => {
+    try {
+      // setLoader(true);
+      handleCloseModal();
+      await updateCollection(
+        firestore,
+        COLLECTION_NAMES.feestructure,
+        feeStructureid,
+        newFee
+      );
+      await queryClient.refetchQueries('student');
+      toast.success('User info edited successfully!', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className='bg-gray-200 grid justify-center p-6'>
       <div className='flex justify-center'>
@@ -81,6 +122,7 @@ const studentDetail = () => {
               <button
                 className='bg-teal-500 hover:bg-teal-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
                 type='button'
+                onClick={handleFeeRecordButton}
               >
                 <Tooltip title='Fee Record'>
                   <DescriptionIcon />
@@ -218,7 +260,7 @@ const studentDetail = () => {
                   <button
                     className='bg-green-600 hover:bg-green-700 text-white w-fit m-2 py-1.5 px-2 rounded focus:outline-none focus:shadow-outline-green'
                     type='button'
-                    // onClick={handleOpenModal}
+                    onClick={handleFeeCollectionButton}
                   >
                     <Tooltip title='Fee Collection'>
                       <ReceiptIcon />
@@ -331,7 +373,7 @@ const studentDetail = () => {
                         </p>
                       </label>
                       <textarea
-                        className='border rounded w-full p-2'
+                        className='border rounded w-full p-2 text-black'
                         rows='3'
                         value={textValue}
                         onChange={handleInputChange}
@@ -342,7 +384,7 @@ const studentDetail = () => {
                       <button
                         className='bg-blue-500 hover:bg-blue-700 text-white  py-1.5 px-4 rounded focus:outline-none focus:shadow-outline-blue'
                         type='submit'
-                        // onClick={handleSubmit}
+                        onClick={ModalSubmitButton}
                       >
                         Submit
                       </button>

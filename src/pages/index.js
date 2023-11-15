@@ -36,6 +36,7 @@ const App = () => {
       pathname: '/student-detail',
       query: {
         id: item.student.id,
+        feeStructureid: feeStructure.id || '',
         firstName: item.student.firstName,
         lastName: item.student.lastName,
         fatherName: item.student.fatherName,
@@ -198,7 +199,7 @@ const App = () => {
                       <th
                         scope='row'
                         onClick={() => handleStudentDetail(item)}
-                        className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer'
+                        className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer text-blue-600 hover:underline'
                       >
                         {item.student.firstName} {item.student.lastName}
                       </th>
