@@ -42,6 +42,7 @@ const Addstudent = () => {
         tuitionFee,
         transportFee,
         createdAt: moment().unix(),
+        updatedAt: moment().unix(),
       });
     },
     {
