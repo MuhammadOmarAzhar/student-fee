@@ -2,7 +2,10 @@ import React, {useState} from 'react';
 import {Divider} from 'antd';
 import {UserAddOutlined} from '@ant-design/icons';
 import {useMutation, useQueryClient} from 'react-query';
-import {insertIntoCollection} from '@/firebase/functions';
+import {
+  insertIntoCollection,
+  insertIntoCollectionReturnId,
+} from '@/firebase/functions';
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
 import {toast} from 'react-toastify';
@@ -27,11 +30,17 @@ const Addstudent = () => {
 
   const createStudentMutation = useMutation(
     async (newStudent) => {
-      await insertIntoCollection(
+      const student_Id = await insertIntoCollectionReturnId(
         firestore,
         COLLECTION_NAMES.students,
         newStudent
       );
+      await insertIntoCollection(firestore, COLLECTION_NAMES.feestructure, {
+        student_Id,
+        admissionFee,
+        tuitionFee,
+        transportFee,
+      });
     },
     {
       onSuccess: () => {
@@ -60,9 +69,6 @@ const Addstudent = () => {
         phone,
         address,
         religion,
-        admissionFee,
-        tuitionFee,
-        transportFee,
       };
       await createStudentMutation.mutateAsync(newStudent);
       router.push('/');
@@ -103,7 +109,6 @@ const Addstudent = () => {
                   type='text'
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  // placeholder='Jane'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -119,7 +124,6 @@ const Addstudent = () => {
                   type='text'
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  // placeholder='Doe'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -135,7 +139,6 @@ const Addstudent = () => {
                   type='text'
                   value={fatherName}
                   onChange={(e) => setFatherName(e.target.value)}
-                  // placeholder='Doe'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -151,7 +154,6 @@ const Addstudent = () => {
                   type='text'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  // placeholder='example@gmail.com'
                 />
               </div>
             </div>
@@ -169,7 +171,6 @@ const Addstudent = () => {
                   type='text'
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  // placeholder='03xxxxxxxxx'
                 />
                 <p className='text-gray-600 text-xs italic'>
                   Contact number should be 11 digits
@@ -188,7 +189,6 @@ const Addstudent = () => {
                   type='text'
                   value={studentClass}
                   onChange={(e) => setStudentClass(e.target.value)}
-                  // placeholder='4'
                 />
               </div>
             </div>
@@ -207,7 +207,6 @@ const Addstudent = () => {
                   type='text'
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  // placeholder='Islamabad'
                 />
               </div>
               <div className='w-full md:w-1/3 px-3 mb-6 md:mb-0'>
@@ -223,7 +222,6 @@ const Addstudent = () => {
                   type='text'
                   value={bloodgroup}
                   onChange={(e) => setBloodGroup(e.target.value)}
-                  // placeholder='B+'
                 />
               </div>
               <div className='w-full md:w-1/3 px-3 mb-6 md:mb-0'>
@@ -269,7 +267,6 @@ const Addstudent = () => {
                   type='text'
                   value={religion}
                   onChange={(e) => setReligion(e.target.value)}
-                  // placeholder='Islam'
                 />
               </div>
               <Divider>Fee Structure</Divider>
@@ -288,7 +285,6 @@ const Addstudent = () => {
                   type='text'
                   value={admissionFee}
                   onChange={(e) => setAdmissionFee(e.target.value)}
-                  // placeholder='3000'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -304,7 +300,6 @@ const Addstudent = () => {
                   type='text'
                   value={tuitionFee}
                   onChange={(e) => setTuitionFee(e.target.value)}
-                  // placeholder='5000'
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -320,7 +315,6 @@ const Addstudent = () => {
                   type='text'
                   value={transportFee}
                   onChange={(e) => setTransportFee(e.target.value)}
-                  // placeholder='1500'
                 />
               </div>
               <Divider />

@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import {Layout, Menu, Button, theme} from 'antd';
 import {useRouter} from 'next/router';
-import {fetchCollection} from '@/firebase/functions';
+import {fetchCollection, fetchCollectionWhere} from '@/firebase/functions';
 import {useQuery, useQueryClient} from 'react-query';
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
@@ -28,42 +28,67 @@ const App = () => {
   };
 
   const handleStudentDetail = (item) => {
-    debugger;
+    const feeStructure =
+      Array.isArray(item.feeStructure) && item.feeStructure.length > 0
+        ? item.feeStructure[0]
+        : {};
     router.push({
       pathname: '/student-detail',
       query: {
-        id: item.id,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        fatherName: item.fatherName,
-        tuitionFee: item.tuitionFee,
-        transportFee: item.transportFee,
-        admissionFee: item.admissionFee,
-        phone: item.phone,
-        address: item.address,
-        bloodgroup: item.bloodgroup,
-        religion: item.religion,
-        studentClass: item.studentClass,
-        gender: item.gender,
-        email: item.email,
+        id: item.student.id,
+        firstName: item.student.firstName,
+        lastName: item.student.lastName,
+        fatherName: item.student.fatherName,
+        tuitionFee: feeStructure.tuitionFee || '',
+        transportFee: feeStructure.transportFee || '',
+        admissionFee: feeStructure.admissionFee || '',
+        phone: item.student.phone,
+        address: item.student.address,
+        bloodgroup: item.student.bloodgroup,
+        religion: item.student.religion,
+        studentClass: item.student.studentClass,
+        gender: item.student.gender,
+        email: item.student.email,
       },
     });
     queryClient.invalidateQueries('student');
   };
 
-  const fetchStudent = async () => {
+  const fetchStudentsWithFeeStructure = async () => {
     try {
-      let response = await fetchCollection(
+      const students = await fetchCollection(
         firestore,
         COLLECTION_NAMES.students
       );
-      return response;
+
+      const studentsWithFeeStructure = {};
+
+      await Promise.all(
+        students.map(async (student) => {
+          const feeStructure = await fetchCollectionWhere(
+            firestore,
+            COLLECTION_NAMES.feestructure,
+            'student_Id',
+            student.id
+          );
+
+          studentsWithFeeStructure[student.id] = {
+            student,
+            feeStructure,
+          };
+        })
+      );
+      return studentsWithFeeStructure;
     } catch (error) {
-      console.error('Error fetching students:', error);
+      console.error('Error fetching students with fee structure:', error);
+      throw error;
     }
   };
 
-  const {data, isLoading, isError} = useQuery('student', fetchStudent);
+  const {data, isLoading, isError} = useQuery(
+    'student',
+    fetchStudentsWithFeeStructure
+  );
 
   if (isLoading) {
     return (
@@ -165,9 +190,9 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item, index) => (
+                  {Object.values(data).map((item, index) => (
                     <tr
-                      key={item.id}
+                      key={item.student.id}
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                     >
                       <th
@@ -175,11 +200,15 @@ const App = () => {
                         onClick={() => handleStudentDetail(item)}
                         className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer'
                       >
-                        {item.firstName} {item.lastName}
+                        {item.student.firstName} {item.student.lastName}
                       </th>
-                      <td className='px-6 py-4'>{item.tuitionFee}</td>
-                      <td className='px-6 py-4'>{item.transportFee}</td>
-                      <td className='px-6 py-4'>{item.phone}</td>
+                      <td className='px-6 py-4'>
+                        {item.feeStructure[0]?.tuitionFee}
+                      </td>
+                      <td className='px-6 py-4'>
+                        {item.feeStructure[0]?.transportFee}
+                      </td>
+                      <td className='px-6 py-4'>{item.student.phone}</td>
                       <td className='px-6 py-4'>
                         <a
                           href='#'

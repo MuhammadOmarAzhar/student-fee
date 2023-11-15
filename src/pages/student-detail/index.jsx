@@ -16,7 +16,7 @@ const studentDetail = () => {
     transportFee: '',
   });
   const [textValue, setTextValue] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const {
     id,
