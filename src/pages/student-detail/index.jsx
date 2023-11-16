@@ -15,6 +15,7 @@ import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {first} from 'lodash';
+import moment from 'moment';
 
 const studentDetail = () => {
   const queryClient = useQueryClient();
@@ -64,7 +65,7 @@ const studentDetail = () => {
 
   const handleOnChange = (e) => {
     const {name, value} = e.target;
-    setNewFee({...newFee, [name]: value});
+    setNewFee({...newFee, [name]: value, updatedAt: moment().unix()});
   };
 
   const handleBack = () => {
@@ -89,7 +90,6 @@ const studentDetail = () => {
 
   const mutation = useMutation(
     async () => {
-      debugger;
       await updateCollection(
         firestore,
         COLLECTION_NAMES.feestructure,
