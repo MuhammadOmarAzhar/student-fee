@@ -20,8 +20,8 @@ import moment from 'moment';
 const studentDetail = () => {
   const queryClient = useQueryClient();
   const [newFee, setNewFee] = useState({
-    tuitionFee: '',
-    transportFee: '',
+    tuition_fee: '',
+    transport_fee: '',
   });
   const [textValue, setTextValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,7 +119,7 @@ const studentDetail = () => {
       let response = await fetchCollectionWhere(
         firestore,
         COLLECTION_NAMES.feestructure,
-        'student_Id',
+        'student-id',
         studentData.id
       );
       return response;
@@ -252,19 +252,19 @@ const studentDetail = () => {
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Admission fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.admissionFee}</p>
+                <p className='text-gray-400 text-sm'>{data.admission_fee}</p>
               </div>
               <div className='w-full md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Tuition fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.tuitionFee}</p>
+                <p className='text-gray-400 text-sm'>{data.tuition_fee}</p>
               </div>
               <div className='w-full mt-6 md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Transport fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.transportFee}</p>
+                <p className='text-gray-400 text-sm'>{data.transport_fee}</p>
               </div>
               <Divider />
               <div className='w-full flex justify-between items-center mt-6 mx-2'>
@@ -333,7 +333,7 @@ const studentDetail = () => {
                           Admission fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.admissionFee}
+                          {data.admission_fee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -341,7 +341,7 @@ const studentDetail = () => {
                           Tuition fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.tuitionFee}
+                          {data.tuition_fee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -349,7 +349,7 @@ const studentDetail = () => {
                           Transport fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.transportFee}
+                          {data.transport_fee}
                         </p>
                       </div>
                     </div>
@@ -367,7 +367,7 @@ const studentDetail = () => {
                           id='grid-tuition-fee'
                           type='tuitionFee'
                           name='tuitionFee'
-                          value={newFee.tuitionFee}
+                          value={newFee.tuition_fee}
                           onChange={handleOnChange}
                         />
                       </div>
@@ -383,7 +383,7 @@ const studentDetail = () => {
                           id='grid-transport-fee'
                           type='transportFee'
                           name='transportFee'
-                          value={newFee.transportFee}
+                          value={newFee.transport_fee}
                           onChange={handleOnChange}
                         />
                       </div>
