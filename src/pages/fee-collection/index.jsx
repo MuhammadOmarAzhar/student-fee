@@ -1,6 +1,8 @@
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import {useRouter} from 'next/router';
 
 const feeCollection = () => {
+  const router = useRouter();
   const dummyData = [
     {
       id: 1,
@@ -15,13 +17,17 @@ const feeCollection = () => {
       status: 'unpaid',
     },
   ];
+
+  const handleBack = () => {
+    router.push('/');
+  };
   return (
     <div className='bg-white h-screen p-6'>
       <div className='flex gap-2'>
         <button
           className='bg-gray-500 hover:bg-gray-700 text-white text-xs  py-1 px-1 rounded focus:outline-none focus:shadow-outline-gray'
           type='button'
-          // onClick={handleBack}
+          onClick={handleBack}
         >
           <KeyboardBackspaceIcon />
         </button>
@@ -29,7 +35,7 @@ const feeCollection = () => {
           Fee Collection
         </h1>
       </div>
-      <div className='text-black mt-6'>
+      <div className='text-black mt-6 p-6'>
         <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
           <table className='min-w-full divide-y divide-gray-200'>
             <thead className='bg-gray-50'>
@@ -103,12 +109,63 @@ const feeCollection = () => {
               <span className='font-semibold'>Net Total:</span>
               <span className='font-semibold ml-3'>7000</span>
             </div>
-            <button
-              className='mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-700'
-              // onClick={() => alert('Payment initiated!')}
-            >
-              Pay Now
-            </button>
+          </div>
+        </div>
+        <div className='flex items-center justify-center'>
+          <div className='mt-6 border border-gray-300 p-4 w-full lg:w-1/2 bg-gray-100'>
+            <div className='w-full px-3'>
+              <input
+                className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                id='grid-tuition-fee'
+                type='text'
+                placeholder='Admission Fee'
+                // value={tuitionFee}
+                // onChange={(e) => setTuitionFee(e.target.value)}
+              />
+            </div>
+            <div className='mt-6 flex'>
+              <div className='w-full md:w-1/2 px-3'>
+                <input
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  id='grid-tuition-fee'
+                  type='text'
+                  placeholder='Tuition Fee'
+                  // value={tuitionFee}
+                  // onChange={(e) => setTuitionFee(e.target.value)}
+                />
+              </div>
+              <div className='w-full md:w-1/2 px-3'>
+                <input
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  id='grid-transport-fee'
+                  type='text'
+                  placeholder='Transport Fee'
+                  // value={transportFee}
+                  // onChange={(e) => setTransportFee(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className='px-3 mt-6'>
+              <label
+                className='flex uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
+                htmlFor='grid-transport-fee'
+              >
+                Note{' '}
+                <p className='text-gray-400 text-[10px] ml-1'>{'(optional)'}</p>
+              </label>
+              <textarea
+                className='border rounded w-full p-2 text-black'
+                rows='3'
+                // value={textValue}
+                // onChange={handleInputChange}
+              />
+            </div>
+            <div className='flex justify-end'>
+              <button className='mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-700'>
+                Pay Now
+              </button>
+            </div>
           </div>
         </div>
       </div>

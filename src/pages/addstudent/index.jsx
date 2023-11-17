@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {Divider} from 'antd';
 import {UserAddOutlined} from '@ant-design/icons';
 import {useMutation, useQueryClient} from 'react-query';
@@ -13,6 +15,7 @@ import {useRouter} from 'next/router';
 import moment from 'moment/moment';
 
 const Addstudent = () => {
+  const [startDate, setStartDate] = useState(new Date());
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [fatherName, setFatherName] = useState('');
@@ -37,12 +40,13 @@ const Addstudent = () => {
         newStudent
       );
       await insertIntoCollection(firestore, COLLECTION_NAMES.feestructure, {
-        student_Id,
-        admissionFee,
-        tuitionFee,
-        transportFee,
+        student_id: student_Id,
+        admission_fee: admissionFee,
+        tuition_fee: tuitionFee,
+        transport_fee: transportFee,
         createdAt: moment().unix(),
         updatedAt: moment().unix(),
+        joining_date: startDate,
       });
     },
     {
@@ -62,13 +66,13 @@ const Addstudent = () => {
   const handleSubmit = async () => {
     try {
       const newStudent = {
-        firstName,
-        lastName,
-        fatherName,
+        first_name: firstName,
+        last_name: lastName,
+        father_name: fatherName,
         email,
-        bloodgroup,
+        blood_group: bloodgroup,
         gender,
-        studentClass,
+        student_class: studentClass,
         phone,
         address,
         religion,
@@ -319,6 +323,19 @@ const Addstudent = () => {
                   type='text'
                   value={transportFee}
                   onChange={(e) => setTransportFee(e.target.value)}
+                />
+              </div>
+              <div className='w-full md:w-1/2 px-3'>
+                <label
+                  className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'
+                  htmlFor='grid-transport-fee'
+                >
+                  Joining Date
+                </label>
+                <DatePicker
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
                 />
               </div>
               <Divider />
