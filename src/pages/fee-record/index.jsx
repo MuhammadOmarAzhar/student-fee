@@ -19,7 +19,7 @@ const feeRecord = () => {
   ];
 
   const handleBack = () => {
-    router.push('/');
+    router.back();
   };
   return (
     <div className='bg-white h-screen p-6'>
