@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Divider} from 'antd';
 import {UserAddOutlined} from '@ant-design/icons';
 import {useMutation, useQueryClient} from 'react-query';
@@ -22,6 +22,7 @@ const EditStudent = () => {
   const [religion, setReligion] = useState('');
   const queryClient = useQueryClient();
   const router = useRouter();
+  const id = useRef();
 
   useEffect(() => {
     const dataString = router.query.data || '';
@@ -37,26 +38,25 @@ const EditStudent = () => {
     setPhone(parsedData.phone || '');
     setAddress(parsedData.address || '');
     setReligion(parsedData.religion || '');
+    id.current = parsedData.id;
   }, [router.query]);
-
-  const studentId = router.query.id || '';
 
   const updateStudentMutation = useMutation(
     async (updatedStudent) => {
       await updateCollection(
         firestore,
         COLLECTION_NAMES.students,
-        studentId,
+        id.current,
         updatedStudent
       );
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('student');
         toast.success('Student updated successfully!', {
           position: 'top-center',
           autoClose: 3000,
         });
+        router.back();
       },
       onError: (error) => {
         console.log(error.message);
@@ -81,7 +81,7 @@ const EditStudent = () => {
       };
 
       await updateStudentMutation.mutateAsync(updatedStudent);
-      router.push('/');
+      queryClient.invalidateQueries('student');
     } catch (error) {
       console.log(error.message);
     }

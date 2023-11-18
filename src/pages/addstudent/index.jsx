@@ -45,8 +45,7 @@ const Addstudent = () => {
         tuition_fee: tuitionFee,
         transport_fee: transportFee,
         createdAt: moment().unix(),
-        updatedAt: moment().unix(),
-        joining_date: startDate,
+        updatedAt: moment(startDate).unix(),
       });
     },
     {

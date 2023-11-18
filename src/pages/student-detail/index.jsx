@@ -54,7 +54,6 @@ const studentDetail = () => {
     gender,
     email,
   };
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -98,7 +97,6 @@ const studentDetail = () => {
       );
 
       await queryClient.invalidateQueries('feestructure');
-
       handleCloseModal();
 
       toast.success('User info edited successfully!', {
@@ -119,7 +117,7 @@ const studentDetail = () => {
       let response = await fetchCollectionWhere(
         firestore,
         COLLECTION_NAMES.feestructure,
-        'student-id',
+        'student_id',
         studentData.id
       );
       return response;
@@ -128,13 +126,17 @@ const studentDetail = () => {
     }
   };
 
-  const {data, isLoading, isError} = useQuery('feestructure', feeStructure, {
-    select: (data) => {
-      return data && data.length > 0 ? first(data) : null;
-    },
-  });
+  const {data, isLoading, isError, error} = useQuery(
+    'feestructure',
+    feeStructure,
+    {
+      select: (data) => {
+        return data && data.length > 0 ? first(data) : null;
+      },
+    }
+  );
 
-  if (isLoading || mutation.isLoading) {
+  if (isLoading || mutation.isLoading || !data) {
     return (
       <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
         Loading...
@@ -252,19 +254,19 @@ const studentDetail = () => {
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Admission fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.admission_fee}</p>
+                <p className='text-gray-400 text-sm'>{data?.admission_fee}</p>
               </div>
               <div className='w-full md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Tuition fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.tuition_fee}</p>
+                <p className='text-gray-400 text-sm'>{data?.tuition_fee}</p>
               </div>
               <div className='w-full mt-6 md:w-1/2 px-3'>
                 <label className='block uppercase tracking-wide text-gray-800 text-sm font-bold'>
                   Transport fee
                 </label>
-                <p className='text-gray-400 text-sm'>{data.transport_fee}</p>
+                <p className='text-gray-400 text-sm'>{data?.transport_fee}</p>
               </div>
               <Divider />
               <div className='w-full flex justify-between items-center mt-6 mx-2'>
@@ -306,7 +308,6 @@ const studentDetail = () => {
                       placeItems: 'center',
                     },
                     content: {
-                      // width: '60%',
                       height: 'auto',
                       margin: 'auto',
                       top: '50%',
@@ -333,7 +334,7 @@ const studentDetail = () => {
                           Admission fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.admission_fee}
+                          {data?.admission_fee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -341,7 +342,7 @@ const studentDetail = () => {
                           Tuition fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.tuition_fee}
+                          {data?.tuition_fee}
                         </p>
                       </div>
                       <div className='flex items-center '>
@@ -349,7 +350,7 @@ const studentDetail = () => {
                           Transport fee:
                         </p>
                         <p className='text-green-700 text-xs ml-1'>
-                          {data.transport_fee}
+                          {data?.transport_fee}
                         </p>
                       </div>
                     </div>
