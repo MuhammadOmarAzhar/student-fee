@@ -31,14 +31,14 @@ const App = () => {
   const handleStudentDetail = (item) => {
     let data = {
       id: item.id,
-      firstName: item.firstName,
-      lastName: item.lastName,
-      fatherName: item.fatherName,
+      firstName: item.first_name,
+      lastName: item.last_name,
+      fatherName: item.father_name,
       phone: item.phone,
       address: item.address,
-      bloodgroup: item.bloodgroup,
+      bloodgroup: item.blood_group,
       religion: item.religion,
-      studentClass: item.studentClass,
+      studentClass: item.student_class,
       gender: item.gender,
       email: item.email,
     };
@@ -47,6 +47,27 @@ const App = () => {
       query: data,
     });
     queryClient.invalidateQueries('student');
+  };
+
+  const handleEditStudent = (item) => {
+    let data = {
+      id: item.id,
+      firstName: item.first_name,
+      lastName: item.last_name,
+      fatherName: item.father_name,
+      phone: item.phone,
+      address: item.address,
+      bloodgroup: item.blood_group,
+      religion: item.religion,
+      studentClass: item.student_class,
+      gender: item.gender,
+      email: item.email,
+    };
+
+    router.push({
+      pathname: '/edit-student',
+      query: {data: JSON.stringify(data)},
+    });
   };
 
   const fetchStudentsWithFeeStructure = async () => {
@@ -60,7 +81,7 @@ const App = () => {
         const feeStructure = await fetchCollectionWhere(
           firestore,
           COLLECTION_NAMES.feestructure,
-          'student_Id',
+          'student_id',
           student.id
         );
 
@@ -192,22 +213,22 @@ const App = () => {
                         onClick={() => handleStudentDetail(item)}
                         className='px-6 py-4 font-medium whitespace-nowrap cursor-pointer text-blue-600 hover:underline'
                       >
-                        {item.firstName} {item.lastName}
+                        {item.first_name} {item.last_name}
                       </th>
                       <td className='px-6 py-4'>
-                        {item.feeStructure?.tuitionFee}
+                        {item.feeStructure?.tuition_fee}
                       </td>
                       <td className='px-6 py-4'>
-                        {item.feeStructure?.transportFee}
+                        {item.feeStructure?.transport_fee}
                       </td>
                       <td className='px-6 py-4'>{item.phone}</td>
                       <td className='px-6 py-4'>
-                        <a
-                          href='#'
-                          className='font-medium text-blue-600 hover:underline'
+                        <button
+                          onClick={() => handleEditStudent(item)}
+                          className='font-medium text-blue-600 hover:underline focus:outline-none'
                         >
                           Edit
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   ))}
