@@ -2,38 +2,76 @@ import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
 import {fetchCollectionWhere} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import {first} from 'lodash';
+import {first, isNil, isNull} from 'lodash';
+import moment from 'moment';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
 
-const feeCollection = () => {
-  const queryClient = useQueryClient();
+const FeeCollection = () => {
   const router = useRouter();
-  const studentId = router.query.studentId || '';
+  const {fee} = router.query;
+  const [feeRecord, setFeeRecord] = useState(null);
+  const [feeRecordList, setFeeRecordList] = useState([]);
 
-  const feeCollection = async () => {
+  const handleBack = () => {
+    router.back();
+  };
+
+  const getMonthsNamesBetweenTimestamps = (startTimestamp, endTimestamp) => {
+    let currentMoment = moment(startTimestamp * 1000); // Assuming timestamps are in seconds
+    const endMoment = moment(endTimestamp * 1000);
+
+    const monthsNames = [];
+
+    while (
+      currentMoment.isBefore(endMoment) ||
+      currentMoment.isSame(endMoment, 'month')
+    ) {
+      monthsNames.push(currentMoment.format('MMMM'));
+      currentMoment.add(1, 'month');
+    }
+
+    return monthsNames;
+  };
+
+  const unPaidMonths = (feeStructure) => {
     try {
       debugger;
-      let fetchedFee = {};
-      let collection = await fetchCollectionWhere(
-        firestore,
-        COLLECTION_NAMES.feestructure,
-        'student_id',
-        studentId
+      // timestamp of last updatedAt fee of student
+      let lastFeeTimeStamp = feeStructure.updatedAt;
+      // get current timestamp
+
+      let currentTimeStamp = moment().unix();
+
+      const monthsNames = getMonthsNamesBetweenTimestamps(
+        lastFeeTimeStamp,
+        currentTimeStamp
       );
-      fetchedFee = {
-        ...fetchedFee,
-        collection: first(collection),
-      };
-      return fetchedFee;
-    } catch (error) {
-      console.error(error);
+      let feeCollection = [];
+      for (let index = 0; index < monthsNames.length; index++) {
+        feeCollection.push({
+          id: index + 1,
+          month: monthsNames[index],
+          tuition_fee: feeStructure.tuition_fee,
+          transport_fee: feeStructure.transport_fee,
+          status: 'Unpaid',
+        });
+      }
+
+      setFeeRecordList(feeCollection);
+    } catch (e) {
+      console.log(e.message);
     }
   };
 
-  const {data, isLoading, isError} = useQuery('feeCollection', feeCollection);
+  useEffect(() => {
+    let feeObject = JSON.parse(fee);
+    setFeeRecord(feeObject);
+    unPaidMonths(feeObject);
+  }, []);
 
-  if (isLoading) {
+  if (isNull(feeRecord)) {
     return (
       <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
         Loading...
@@ -41,28 +79,6 @@ const feeCollection = () => {
     );
   }
 
-  if (isError) {
-    return <div>Error fetching data</div>;
-  }
-
-  const dummyData = [
-    {
-      id: 1,
-      month: 'June',
-      feeStructure: {tuitionFee: 1000, transportFee: 2000},
-      status: 'paid',
-    },
-    {
-      id: 2,
-      month: 'July',
-      feeStructure: {tuitionFee: 1200, transportFee: 1500},
-      status: 'unpaid',
-    },
-  ];
-
-  const handleBack = () => {
-    router.back();
-  };
   return (
     <div className='bg-white h-screen p-6'>
       <div className='flex gap-2'>
@@ -109,7 +125,7 @@ const feeCollection = () => {
               </tr>
             </thead>
             <tbody className='bg-white divide-y divide-gray-200'>
-              {dummyData.map((item, index) => (
+              {feeRecordList.map((item, index) => (
                 <tr
                   key={item.id}
                   className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
@@ -120,8 +136,8 @@ const feeCollection = () => {
                   >
                     {item.month}
                   </th>
-                  <td className='px-6 py-4'>{data.collection.tuition_fee}</td>
-                  <td className='px-6 py-4'>{data.collection.transport_fee}</td>
+                  <td className='px-6 py-4'>{item.tuition_fee}</td>
+                  <td className='px-6 py-4'>{item.transport_fee}</td>
                   <td className='px-6 py-4 text-gray-500 font-semibold underline'>
                     {item.status}
                   </td>
@@ -141,10 +157,12 @@ const feeCollection = () => {
               <span className='font-medium'>Total Transport Fee:</span>
               <span className='ml-3 '>2000</span>
             </div>
-            <div className='flex justify-between mt-2'>
-              <span className='font-medium'>Admission Fee:</span>
-              <span className='ml-3 '>{data.collection.admission_fee}</span>
-            </div>
+            {!feeRecord?.admission_status ? (
+              <div className='flex justify-between mt-2'>
+                <span className='font-medium'>Admission Fee:</span>
+                <span className='ml-3 '>{feeRecord.admission_fee}</span>
+              </div>
+            ) : null}
             <div className='flex justify-between mt-2'>
               <span className='font-semibold'>Net Total:</span>
               <span className='font-semibold ml-3'>7000</span>
@@ -153,16 +171,18 @@ const feeCollection = () => {
         </div>
         <div className='flex items-center justify-center'>
           <div className='mt-6 border border-gray-300 p-4 w-full lg:w-1/2 bg-gray-100'>
-            <div className='w-full px-3'>
-              <input
-                className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
-                id='grid-tuition-fee'
-                type='text'
-                placeholder='Admission Fee'
-                // value={tuitionFee}
-                // onChange={(e) => setTuitionFee(e.target.value)}
-              />
-            </div>
+            {!feeRecord?.admission_status ? (
+              <div className='w-full px-3'>
+                <input
+                  className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
+                  id='grid-tuition-fee'
+                  type='text'
+                  placeholder='Admission Fee'
+                  // value={tuitionFee}
+                  // onChange={(e) => setTuitionFee(e.target.value)}
+                />
+              </div>
+            ) : null}
             <div className='mt-6 flex'>
               <div className='w-full md:w-1/2 px-3'>
                 <input
@@ -213,4 +233,4 @@ const feeCollection = () => {
   );
 };
 
-export default feeCollection;
+export default FeeCollection;

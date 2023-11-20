@@ -77,7 +77,7 @@ const studentDetail = () => {
   const handleFeeCollectionButton = () => {
     router.push({
       pathname: '/fee-collection',
-      query: {studentId: studentData.id},
+      query: {fee: JSON.stringify(data)},
     });
   };
 
