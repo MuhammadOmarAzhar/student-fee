@@ -28,7 +28,6 @@ const studentDetail = () => {
   const router = useRouter();
   const {
     id,
-
     firstName,
     lastName,
     fatherName,
@@ -76,7 +75,10 @@ const studentDetail = () => {
   };
 
   const handleFeeCollectionButton = () => {
-    router.push('/fee-collection');
+    router.push({
+      pathname: '/fee-collection',
+      query: {studentId: studentData.id},
+    });
   };
 
   const handleInputChange = (e) => {
@@ -126,15 +128,11 @@ const studentDetail = () => {
     }
   };
 
-  const {data, isLoading, isError, error} = useQuery(
-    'feestructure',
-    feeStructure,
-    {
-      select: (data) => {
-        return data && data.length > 0 ? first(data) : null;
-      },
-    }
-  );
+  const {data, isLoading} = useQuery('feestructure', feeStructure, {
+    select: (data) => {
+      return data && data.length > 0 ? first(data) : null;
+    },
+  });
 
   if (isLoading || mutation.isLoading || !data) {
     return (
@@ -142,10 +140,6 @@ const studentDetail = () => {
         Loading...
       </div>
     );
-  }
-
-  if (isError) {
-    return <div>Error fetching data</div>;
   }
 
   return (

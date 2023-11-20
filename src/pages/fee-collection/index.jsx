@@ -1,8 +1,50 @@
+import {firestore} from '@/firebase-config';
+import {COLLECTION_NAMES} from '@/firebase/constants';
+import {fetchCollectionWhere} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import {first} from 'lodash';
 import {useRouter} from 'next/router';
+import {useQuery, useQueryClient} from 'react-query';
 
 const feeCollection = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
+  const studentId = router.query.studentId || '';
+
+  const feeCollection = async () => {
+    try {
+      debugger;
+      let fetchedFee = {};
+      let collection = await fetchCollectionWhere(
+        firestore,
+        COLLECTION_NAMES.feestructure,
+        'student_id',
+        studentId
+      );
+      fetchedFee = {
+        ...fetchedFee,
+        collection: first(collection),
+      };
+      return fetchedFee;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const {data, isLoading, isError} = useQuery('feeCollection', feeCollection);
+
+  if (isLoading) {
+    return (
+      <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
+        Loading...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Error fetching data</div>;
+  }
+
   const dummyData = [
     {
       id: 1,
@@ -78,10 +120,8 @@ const feeCollection = () => {
                   >
                     {item.month}
                   </th>
-                  <td className='px-6 py-4'>{item.feeStructure?.tuitionFee}</td>
-                  <td className='px-6 py-4'>
-                    {item.feeStructure?.transportFee}
-                  </td>
+                  <td className='px-6 py-4'>{data.collection.tuition_fee}</td>
+                  <td className='px-6 py-4'>{data.collection.transport_fee}</td>
                   <td className='px-6 py-4 text-gray-500 font-semibold underline'>
                     {item.status}
                   </td>
@@ -103,7 +143,7 @@ const feeCollection = () => {
             </div>
             <div className='flex justify-between mt-2'>
               <span className='font-medium'>Admission Fee:</span>
-              <span className='ml-3 '>2000</span>
+              <span className='ml-3 '>{data.collection.admission_fee}</span>
             </div>
             <div className='flex justify-between mt-2'>
               <span className='font-semibold'>Net Total:</span>
