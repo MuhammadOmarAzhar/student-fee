@@ -1,18 +1,25 @@
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
-import {fetchCollectionWhere} from '@/firebase/functions';
+import {updateCollection} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import {first, isNil, isNull} from 'lodash';
+import {isNull} from 'lodash';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import {useMutation} from 'react-query';
+import {toast} from 'react-toastify';
 
 const FeeCollection = () => {
   const router = useRouter();
   const {fee} = router.query;
   const [feeRecord, setFeeRecord] = useState(null);
   const [feeRecordList, setFeeRecordList] = useState([]);
+  const [totalTuitionFee, setTotalTuitionFee] = useState();
+  const [totalTransportFee, setTotalTransportFee] = useState();
+  const [newAdmissionFee, setNewAdmissionFee] = useState();
+  const [newTuitionFee, setNewTuitionFee] = useState();
+  const [newTransportFee, setNewTransportFee] = useState();
+  const [textValue, setTextValue] = useState();
 
   const handleBack = () => {
     router.back();
@@ -37,7 +44,6 @@ const FeeCollection = () => {
 
   const unPaidMonths = (feeStructure) => {
     try {
-      debugger;
       // timestamp of last updatedAt fee of student
       let lastFeeTimeStamp = feeStructure.updatedAt;
       // get current timestamp
@@ -48,22 +54,70 @@ const FeeCollection = () => {
         lastFeeTimeStamp,
         currentTimeStamp
       );
+
+      let totalTuitionFee = 0;
+      let totalTransportFee = 0;
+
       let feeCollection = [];
       for (let index = 0; index < monthsNames.length; index++) {
+        const month = monthsNames[index];
+        const tuition_fee = feeStructure.tuition_fee;
+        const transport_fee = feeStructure.transport_fee;
+
+        totalTuitionFee += Number(tuition_fee);
+        totalTransportFee += Number(transport_fee);
+
         feeCollection.push({
           id: index + 1,
-          month: monthsNames[index],
-          tuition_fee: feeStructure.tuition_fee,
-          transport_fee: feeStructure.transport_fee,
+          month: month,
+          tuition_fee: tuition_fee,
+          transport_fee: transport_fee,
           status: 'Unpaid',
         });
       }
 
+      console.log('Total Tuition Fee:', totalTuitionFee);
+      console.log('Total Transport Fee:', totalTransportFee);
+
       setFeeRecordList(feeCollection);
+      setTotalTuitionFee(totalTuitionFee);
+      setTotalTransportFee(totalTransportFee);
     } catch (e) {
       console.log(e.message);
     }
   };
+
+  const handleInputChange = (e) => {
+    setTextValue(e.target.value);
+  };
+
+  const PayNowButton = () => {
+    mutation.mutate();
+  };
+
+  const mutation = useMutation(
+    async () => {
+      await updateCollection(
+        firestore,
+        COLLECTION_NAMES.feerecord,
+        data.id,
+        newFee
+      );
+
+      await queryClient.invalidateQueries('feestructure');
+
+      toast.success('User info edited successfully!', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+    },
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log(error.message);
+      },
+    }
+  );
 
   useEffect(() => {
     let feeObject = JSON.parse(fee);
@@ -80,7 +134,7 @@ const FeeCollection = () => {
   }
 
   return (
-    <div className='bg-white h-screen p-6'>
+    <div className='bg-white h-full p-6'>
       <div className='flex gap-2'>
         <button
           className='bg-gray-500 hover:bg-gray-700 text-white text-xs  py-1 px-1 rounded focus:outline-none focus:shadow-outline-gray'
@@ -149,14 +203,6 @@ const FeeCollection = () => {
         <div className='mt-6 flex justify-end'>
           <div className='text-black'>
             <h2 className='font-semibold text-lg'>Totals</h2>
-            <div className='flex justify-between mt-2'>
-              <span className='font-medium'>Total Tuition Fee:</span>
-              <span className='ml-3 '>3000</span>
-            </div>
-            <div className='flex justify-between mt-2'>
-              <span className='font-medium'>Total Transport Fee:</span>
-              <span className='ml-3 '>2000</span>
-            </div>
             {!feeRecord?.admission_status ? (
               <div className='flex justify-between mt-2'>
                 <span className='font-medium'>Admission Fee:</span>
@@ -164,8 +210,22 @@ const FeeCollection = () => {
               </div>
             ) : null}
             <div className='flex justify-between mt-2'>
+              <span className='font-medium'>Total Tuition Fee:</span>
+              <span className='ml-3 '>{totalTuitionFee}</span>
+            </div>
+            <div className='flex justify-between mt-2'>
+              <span className='font-medium'>Total Transport Fee:</span>
+              <span className='ml-3 '>{totalTransportFee}</span>
+            </div>
+            <div className='flex justify-between mt-2'>
               <span className='font-semibold'>Net Total:</span>
-              <span className='font-semibold ml-3'>7000</span>
+              <span className='font-semibold ml-3'>
+                {parseFloat(
+                  feeRecord.admission_fee ? feeRecord.admission_fee : 0
+                ) +
+                  totalTuitionFee +
+                  totalTransportFee}
+              </span>
             </div>
           </div>
         </div>
@@ -178,8 +238,8 @@ const FeeCollection = () => {
                   id='grid-tuition-fee'
                   type='text'
                   placeholder='Admission Fee'
-                  // value={tuitionFee}
-                  // onChange={(e) => setTuitionFee(e.target.value)}
+                  value={newAdmissionFee}
+                  onChange={(e) => setNewAdmissionFee(e.target.value)}
                 />
               </div>
             ) : null}
@@ -190,8 +250,8 @@ const FeeCollection = () => {
                   id='grid-tuition-fee'
                   type='text'
                   placeholder='Tuition Fee'
-                  // value={tuitionFee}
-                  // onChange={(e) => setTuitionFee(e.target.value)}
+                  value={newTuitionFee}
+                  onChange={(e) => setNewTuitionFee(e.target.value)}
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -200,8 +260,8 @@ const FeeCollection = () => {
                   id='grid-transport-fee'
                   type='text'
                   placeholder='Transport Fee'
-                  // value={transportFee}
-                  // onChange={(e) => setTransportFee(e.target.value)}
+                  value={newTransportFee}
+                  onChange={(e) => setNewTransportFee(e.target.value)}
                 />
               </div>
             </div>
@@ -217,12 +277,15 @@ const FeeCollection = () => {
               <textarea
                 className='border rounded w-full p-2 text-black'
                 rows='3'
-                // value={textValue}
-                // onChange={handleInputChange}
+                value={textValue}
+                onChange={handleInputChange}
               />
             </div>
             <div className='flex justify-end'>
-              <button className='mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-700'>
+              <button
+                onClick={PayNowButton}
+                className='mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-700'
+              >
                 Pay Now
               </button>
             </div>
