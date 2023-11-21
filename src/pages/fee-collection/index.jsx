@@ -1,6 +1,6 @@
 import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
-import {updateCollection} from '@/firebase/functions';
+import {insertIntoCollection, updateCollection} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {isNull} from 'lodash';
 import moment from 'moment';
@@ -16,10 +16,13 @@ const FeeCollection = () => {
   const [feeRecordList, setFeeRecordList] = useState([]);
   const [totalTuitionFee, setTotalTuitionFee] = useState();
   const [totalTransportFee, setTotalTransportFee] = useState();
-  const [newAdmissionFee, setNewAdmissionFee] = useState();
-  const [newTuitionFee, setNewTuitionFee] = useState();
-  const [newTransportFee, setNewTransportFee] = useState();
-  const [textValue, setTextValue] = useState();
+  const [totalAmount, setTotalAmount] = useState(0);
+  let [newFee, setNewFee] = useState({
+    admission_fee: '',
+    tuition_fee: '',
+    transport_fee: '',
+    note: '',
+  });
 
   const handleBack = () => {
     router.back();
@@ -44,9 +47,7 @@ const FeeCollection = () => {
 
   const unPaidMonths = (feeStructure) => {
     try {
-      // timestamp of last updatedAt fee of student
       let lastFeeTimeStamp = feeStructure.updatedAt;
-      // get current timestamp
 
       let currentTimeStamp = moment().unix();
 
@@ -76,19 +77,20 @@ const FeeCollection = () => {
         });
       }
 
-      console.log('Total Tuition Fee:', totalTuitionFee);
-      console.log('Total Transport Fee:', totalTransportFee);
-
       setFeeRecordList(feeCollection);
       setTotalTuitionFee(totalTuitionFee);
       setTotalTransportFee(totalTransportFee);
+      setTotalAmount(
+        totalTuitionFee + totalTransportFee + Number(feeStructure.admission_fee)
+      );
     } catch (e) {
       console.log(e.message);
     }
   };
 
-  const handleInputChange = (e) => {
-    setTextValue(e.target.value);
+  const handleOnChange = (e) => {
+    const {name, value} = e.target;
+    setNewFee({...newFee, [name]: value});
   };
 
   const PayNowButton = () => {
@@ -97,22 +99,33 @@ const FeeCollection = () => {
 
   const mutation = useMutation(
     async () => {
-      await updateCollection(
-        firestore,
-        COLLECTION_NAMES.feerecord,
-        data.id,
-        newFee
-      );
-
-      await queryClient.invalidateQueries('feestructure');
-
-      toast.success('User info edited successfully!', {
+      newFee = {
+        ...newFee,
+        createdAt: moment().unix(),
+        total_amount: totalAmount,
+        status: 'paid',
+        last_month_timestamp: feeRecord.updatedAt,
+      };
+      await insertIntoCollection(firestore, COLLECTION_NAMES.feeRecord, newFee);
+      toast.success('Fee Record Added!', {
         position: 'top-center',
         autoClose: 3000,
       });
     },
     {
-      onSuccess: () => {},
+      onSuccess: async () => {
+        let data = {
+          updatedAt: moment().unix(),
+          admission_status: true,
+        };
+        await updateCollection(
+          firestore,
+          COLLECTION_NAMES.feestructure,
+          feeRecord.id,
+          data
+        );
+        router.back();
+      },
       onError: (error) => {
         console.log(error.message);
       },
@@ -134,7 +147,7 @@ const FeeCollection = () => {
   }
 
   return (
-    <div className='bg-white h-full p-6'>
+    <div className='bg-white h-screen p-6'>
       <div className='flex gap-2'>
         <button
           className='bg-gray-500 hover:bg-gray-700 text-white text-xs  py-1 px-1 rounded focus:outline-none focus:shadow-outline-gray'
@@ -219,13 +232,7 @@ const FeeCollection = () => {
             </div>
             <div className='flex justify-between mt-2'>
               <span className='font-semibold'>Net Total:</span>
-              <span className='font-semibold ml-3'>
-                {parseFloat(
-                  feeRecord.admission_fee ? feeRecord.admission_fee : 0
-                ) +
-                  totalTuitionFee +
-                  totalTransportFee}
-              </span>
+              <span className='font-semibold ml-3'>{totalAmount}</span>
             </div>
           </div>
         </div>
@@ -237,9 +244,10 @@ const FeeCollection = () => {
                   className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-tuition-fee'
                   type='text'
+                  name='admission_fee'
                   placeholder='Admission Fee'
-                  value={newAdmissionFee}
-                  onChange={(e) => setNewAdmissionFee(e.target.value)}
+                  value={newFee.admission_fee}
+                  onChange={handleOnChange}
                 />
               </div>
             ) : null}
@@ -249,9 +257,10 @@ const FeeCollection = () => {
                   className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-tuition-fee'
                   type='text'
+                  name='tuition_fee'
                   placeholder='Tuition Fee'
-                  value={newTuitionFee}
-                  onChange={(e) => setNewTuitionFee(e.target.value)}
+                  value={newFee.tuition_fee}
+                  onChange={handleOnChange}
                 />
               </div>
               <div className='w-full md:w-1/2 px-3'>
@@ -259,9 +268,10 @@ const FeeCollection = () => {
                   className='appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
                   id='grid-transport-fee'
                   type='text'
+                  name='transport_fee'
                   placeholder='Transport Fee'
-                  value={newTransportFee}
-                  onChange={(e) => setNewTransportFee(e.target.value)}
+                  value={newFee.transport_fee}
+                  onChange={handleOnChange}
                 />
               </div>
             </div>
@@ -277,8 +287,9 @@ const FeeCollection = () => {
               <textarea
                 className='border rounded w-full p-2 text-black'
                 rows='3'
-                value={textValue}
-                onChange={handleInputChange}
+                name='note'
+                value={newFee.note}
+                onChange={handleOnChange}
               />
             </div>
             <div className='flex justify-end'>
