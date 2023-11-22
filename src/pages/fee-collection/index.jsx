@@ -62,6 +62,11 @@ const FeeCollection = () => {
       let feeCollection = [];
       for (let index = 0; index < monthsNames.length; index++) {
         const month = monthsNames[index];
+
+        if (moment().format('MMMM') === month) {
+          continue;
+        }
+
         const tuition_fee = feeStructure.tuition_fee;
         const transport_fee = feeStructure.transport_fee;
 
@@ -81,7 +86,11 @@ const FeeCollection = () => {
       setTotalTuitionFee(totalTuitionFee);
       setTotalTransportFee(totalTransportFee);
       setTotalAmount(
-        totalTuitionFee + totalTransportFee + Number(feeStructure.admission_fee)
+        totalTuitionFee +
+          totalTransportFee +
+          (feeStructure.admission_status
+            ? 0
+            : Number(feeStructure.admission_fee))
       );
     } catch (e) {
       console.log(e.message);
