@@ -114,6 +114,7 @@ const FeeCollection = () => {
         total_amount: totalAmount,
         status: 'paid',
         last_month_timestamp: feeRecord.updatedAt,
+        student_id: feeRecord.student_id,
       };
       await insertIntoCollection(firestore, COLLECTION_NAMES.feeRecord, newFee);
       toast.success('Fee Record Added!', {

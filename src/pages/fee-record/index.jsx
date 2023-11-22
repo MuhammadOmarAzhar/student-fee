@@ -1,8 +1,16 @@
+import {firestore} from '@/firebase-config';
+import {COLLECTION_NAMES} from '@/firebase/constants';
+import {fetchCollectionWhere} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import moment from 'moment';
 import {useRouter} from 'next/router';
+import {useQuery} from 'react-query';
 
 const feeRecord = () => {
   const router = useRouter();
+  const {id} = router.query;
+  let studentId = JSON.parse(id);
+
   const dummyData = [
     {
       id: 1,
@@ -18,9 +26,93 @@ const feeRecord = () => {
     },
   ];
 
+  const feeRecord = async () => {
+    try {
+      let response = await fetchCollectionWhere(
+        firestore,
+        COLLECTION_NAMES.feeRecord,
+        'student_id',
+        studentId
+      );
+      return response;
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // const getMonthsNamesBetweenTimestamps = (startTimestamp, endTimestamp) => {
+  //   let currentMoment = moment(startTimestamp * 1000); // Assuming timestamps are in seconds
+  //   const endMoment = moment(endTimestamp * 1000);
+
+  //   const monthsNames = [];
+
+  //   while (
+  //     currentMoment.isBefore(endMoment) ||
+  //     currentMoment.isSame(endMoment, 'month')
+  //   ) {
+  //     monthsNames.push(currentMoment.format('MMMM'));
+  //     currentMoment.add(1, 'month');
+  //   }
+  //   debugger;
+
+  //   return monthsNames;
+  // };
+
+  // const getMonthsNamesBetweenTimestamps = (lastTimeStamp, currentTimeStamp) => {
+  //   let endMoment = moment(lastTimeStamp * 1000); // Assuming timestamps are in seconds
+  //   const currentMoment = moment(currentTimeStamp * 1000);
+
+  //   const monthsNames = [];
+
+  //   // Add the start month
+  //   monthsNames.push(endMoment.format('MMMM'));
+
+  //   while (endMoment.add(1, 'month').isBefore(currentMoment)) {
+  //     monthsNames.push(endMoment.format('MMMM'));
+  //   }
+
+  //   debugger;
+
+  //   return monthsNames;
+  // };
+
+  const getMonthsNamesBetweenTimestamps = (lastTimeStamp, currentTimeStamp) => {
+    let endMoment = moment(lastTimeStamp * 1000); // Assuming timestamps are in seconds
+    const currentMoment = moment(currentTimeStamp * 1000);
+
+    const monthsNames = [];
+
+    // Add the start month if it's not the same as the current month
+    if (!endMoment.isSame(currentMoment, 'month')) {
+      monthsNames.push(endMoment.format('MMM'));
+    }
+
+    while (endMoment.add(1, 'month').isBefore(currentMoment)) {
+      monthsNames.push(endMoment.format('MMM'));
+    }
+    monthsNames.pop();
+
+    let monthsString = monthsNames.join(', ');
+    return monthsString;
+  };
+
   const handleBack = () => {
     router.back();
   };
+  const {data, isLoading, isError} = useQuery('feerecord', feeRecord);
+
+  if (isLoading) {
+    return (
+      <div className='h-screen bg-white flex justify-center items-center text-black text-xl font-bold'>
+        Loading...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Error fetching data</div>;
+  }
+
   return (
     <div className='bg-white h-screen p-6'>
       <div className='flex gap-2'>
@@ -67,7 +159,7 @@ const feeRecord = () => {
               </tr>
             </thead>
             <tbody className='bg-white divide-y divide-gray-200'>
-              {dummyData.map((item, index) => (
+              {data.map((item, index) => (
                 <tr
                   key={item.id}
                   className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
@@ -76,12 +168,13 @@ const feeRecord = () => {
                     scope='row'
                     className='px-6 py-4 font-medium whitespace-nowrap text-left text-black'
                   >
-                    {item.month}
+                    {getMonthsNamesBetweenTimestamps(
+                      item.last_month_timestamp,
+                      item.createdAt
+                    )}
                   </th>
-                  <td className='px-6 py-4'>{item.feeStructure?.tuitionFee}</td>
-                  <td className='px-6 py-4'>
-                    {item.feeStructure?.transportFee}
-                  </td>
+                  <td className='px-6 py-4'>{item.tuition_fee}</td>
+                  <td className='px-6 py-4'>{item.transport_fee}</td>
                   <td className='px-6 py-4 text-gray-500 font-semibold underline'>
                     {item.status}
                   </td>

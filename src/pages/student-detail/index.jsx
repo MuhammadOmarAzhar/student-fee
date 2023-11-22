@@ -71,7 +71,10 @@ const studentDetail = () => {
   };
 
   const handleFeeRecordButton = () => {
-    router.push('/fee-record');
+    router.push({
+      pathname: '/fee-record',
+      query: {id: JSON.stringify(studentData.id)},
+    });
   };
 
   const handleFeeCollectionButton = () => {
