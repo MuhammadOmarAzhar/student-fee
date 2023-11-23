@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
+import MapIcon from '@mui/icons-material/Map';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PhoneOutlined,
   UserOutlined,
   MoneyCollectOutlined,
 } from '@ant-design/icons';
@@ -138,10 +138,10 @@ const App = () => {
           </Menu.Item>
           <Menu.Item
             key='3'
-            icon={<PhoneOutlined />}
+            icon={<MapIcon />}
             onClick={() => router.push('/contact')}
           >
-            Contact
+            Location
           </Menu.Item>
         </Menu>
       </Sider>

@@ -2,29 +2,19 @@ import {firestore} from '@/firebase-config';
 import {COLLECTION_NAMES} from '@/firebase/constants';
 import {fetchCollectionWhere} from '@/firebase/functions';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import CloseIcon from '@mui/icons-material/Close';
+import Modal from 'react-modal';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import {useQuery} from 'react-query';
+import {useState} from 'react';
 
 const feeRecord = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const router = useRouter();
   const {id} = router.query;
   let studentId = JSON.parse(id);
-
-  const dummyData = [
-    {
-      id: 1,
-      month: 'June',
-      feeStructure: {tuitionFee: 1000, transportFee: 2000},
-      status: 'paid',
-    },
-    {
-      id: 2,
-      month: 'July',
-      feeStructure: {tuitionFee: 1200, transportFee: 1500},
-      status: 'unpaid',
-    },
-  ];
 
   const feeRecord = async () => {
     try {
@@ -39,42 +29,6 @@ const feeRecord = () => {
       console.log(error.message);
     }
   };
-
-  // const getMonthsNamesBetweenTimestamps = (startTimestamp, endTimestamp) => {
-  //   let currentMoment = moment(startTimestamp * 1000); // Assuming timestamps are in seconds
-  //   const endMoment = moment(endTimestamp * 1000);
-
-  //   const monthsNames = [];
-
-  //   while (
-  //     currentMoment.isBefore(endMoment) ||
-  //     currentMoment.isSame(endMoment, 'month')
-  //   ) {
-  //     monthsNames.push(currentMoment.format('MMMM'));
-  //     currentMoment.add(1, 'month');
-  //   }
-  //   debugger;
-
-  //   return monthsNames;
-  // };
-
-  // const getMonthsNamesBetweenTimestamps = (lastTimeStamp, currentTimeStamp) => {
-  //   let endMoment = moment(lastTimeStamp * 1000); // Assuming timestamps are in seconds
-  //   const currentMoment = moment(currentTimeStamp * 1000);
-
-  //   const monthsNames = [];
-
-  //   // Add the start month
-  //   monthsNames.push(endMoment.format('MMMM'));
-
-  //   while (endMoment.add(1, 'month').isBefore(currentMoment)) {
-  //     monthsNames.push(endMoment.format('MMMM'));
-  //   }
-
-  //   debugger;
-
-  //   return monthsNames;
-  // };
 
   const getMonthsNamesBetweenTimestamps = (lastTimeStamp, currentTimeStamp) => {
     let endMoment = moment(lastTimeStamp * 1000); // Assuming timestamps are in seconds
@@ -99,6 +53,16 @@ const feeRecord = () => {
   const handleBack = () => {
     router.back();
   };
+
+  const handleOpenModal = (item) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   const {data, isLoading, isError} = useQuery('feerecord', feeRecord);
 
   if (isLoading) {
@@ -142,6 +106,12 @@ const feeRecord = () => {
                   scope='col'
                   className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                 >
+                  Admission Fee
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                >
                   Tuition Fee
                 </th>
                 <th
@@ -166,13 +136,15 @@ const feeRecord = () => {
                 >
                   <th
                     scope='row'
-                    className='px-6 py-4 font-medium whitespace-nowrap text-left text-black'
+                    className='px-6 py-4 font-medium whitespace-nowrap text-left text-black cursor-pointer hover:underline'
+                    onClick={() => handleOpenModal(item)}
                   >
                     {getMonthsNamesBetweenTimestamps(
                       item.last_month_timestamp,
                       item.createdAt
                     )}
                   </th>
+                  <td className='px-6 py-4'>{item.admission_fee}</td>
                   <td className='px-6 py-4'>{item.tuition_fee}</td>
                   <td className='px-6 py-4'>{item.transport_fee}</td>
                   <td className='px-6 py-4 text-gray-500 font-semibold underline'>
@@ -184,6 +156,99 @@ const feeRecord = () => {
           </table>
         </div>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={handleCloseModal}
+        contentLabel='New Fee Structure Modal'
+        className='grid grid-cols-1 justify-center items-center bg-white'
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'grid',
+            placeItems: 'center',
+          },
+          content: {
+            height: 'auto',
+            margin: 'auto',
+            top: '50%',
+            borderRadius: '8px',
+          },
+        }}
+      >
+        <>
+          {selectedItem && (
+            <div>
+              <div className='flex justify-between items-center'>
+                <h2 className='text-black ml-6 font-semibold uppercase text-lg '>
+                  Fee Detail
+                </h2>
+                <button className='text-black p-4' onClick={handleCloseModal}>
+                  <CloseIcon />
+                </button>
+              </div>
+              <div className='grid grid-cols-3'>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase text-green-800 font-semibold'>
+                    Admission fee:
+                  </p>
+                  <p className='text-green-700 ml-1'>
+                    {selectedItem.admission_fee}
+                  </p>
+                </div>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase text-green-800 font-semibold'>
+                    Tuition fee:
+                  </p>
+                  <p className='text-green-700 ml-1'>
+                    {selectedItem.tuition_fee}
+                  </p>
+                </div>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase tracking-wide text-green-800 font-semibold'>
+                    Transport fee:
+                  </p>
+                  <p className='text-green-700 ml-1'>
+                    {selectedItem.transport_fee}
+                  </p>
+                </div>
+              </div>
+              <div className='grid grid-cols-3'>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase text-green-800 font-semibold'>
+                    Date:
+                  </p>
+                  <p className='text-green-700 ml-1'>
+                    {moment(selectedItem.createdAt * 1000).format(
+                      'DD/MMM/YYYY'
+                    )}
+                  </p>
+                </div>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase text-green-800 font-semibold'>
+                    Status:
+                  </p>
+                  <p className='text-green-700 ml-1'>{selectedItem.status}</p>
+                </div>
+                <div className='px-6 py-3 justify-between flex '>
+                  <p className='uppercase text-green-800 font-semibold'>
+                    Note:
+                  </p>
+                  <p className='text-green-700 ml-1'>{selectedItem.note}</p>
+                </div>
+              </div>
+
+              <div className='px-6 py-3 justify-center items-center flex mt-2'>
+                <p className='uppercase text-black font-semibold'>
+                  Total Amount:
+                </p>
+                <p className='text-green-700 ml-1'>
+                  {selectedItem.total_amount}
+                </p>
+              </div>
+            </div>
+          )}
+        </>
+      </Modal>
     </div>
   );
 };
