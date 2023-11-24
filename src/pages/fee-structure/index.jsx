@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MapIcon from '@mui/icons-material/Map';
 import {
   MenuFoldOutlined,
@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import {Layout, Menu, Button, theme} from 'antd';
 import {useRouter} from 'next/router';
+
 const {Header, Sider, Content} = Layout;
 const FeeStructure = () => {
   const router = useRouter();
@@ -15,6 +16,24 @@ const FeeStructure = () => {
   const {
     token: {colorBgContainer},
   } = theme.useToken();
+
+  const [text, setText] = useState('');
+
+  useEffect(() => {
+    const originalText = 'Muhammad Omar Azhar';
+    let currentIndex = 0;
+
+    const intervalId = setInterval(() => {
+      setText(originalText.substring(0, currentIndex));
+      currentIndex++;
+
+      if (currentIndex > originalText.length) {
+        clearInterval(intervalId);
+      }
+    }, 50);
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -62,6 +81,7 @@ const FeeStructure = () => {
           />
         </Header>
         <Content
+          // Apply the Tailwind CSS animation class
           style={{
             margin: '24px 16px',
             padding: 24,
@@ -69,7 +89,10 @@ const FeeStructure = () => {
             background: colorBgContainer,
           }}
         >
-          Content
+          <div>
+            <p className='text-2xl'>{text}</p>
+            <p className='animate-bounce text-2xl'>Hello its me</p>
+          </div>
         </Content>
       </Layout>
     </Layout>
