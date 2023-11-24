@@ -13,16 +13,13 @@ import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const {Header, Sider, Content} = Layout;
-
 const Contact = () => {
-  const latitude = 33.973601;
-  const longitude = 71.449249;
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: {colorBgContainer},
   } = theme.useToken();
-
+  const position = [33.974539, 71.449729];
   return (
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -66,20 +63,24 @@ const Contact = () => {
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
+            height: '100%',
           }}
         >
           {/* Map Container */}
           <MapContainer
-            center={[latitude, longitude]}
+            style={{height: '100%'}}
+            center={position}
             zoom={13}
-            style={{height: '400px'}}
+            scrollWheelZoom={false}
           >
             <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-              attribution='&copy; OpenStreetMap contributors'
             />
-            <Marker position={[latitude, longitude]}>
-              <Popup>Your Location</Popup>
+            <Marker position={position}>
+              <Popup>
+                A pretty CSS3 popup. <br /> Easily customizable.
+              </Popup>
             </Marker>
           </MapContainer>
         </Content>
